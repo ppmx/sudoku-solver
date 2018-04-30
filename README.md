@@ -1,11 +1,9 @@
 # Solving Sudoku Puzzles By Algorithms
 
 ## Description
-This is a sudoku solving engine written in Python and using an SMT Solver (Z3)
-rather than the approach of Peter Norvig. I would like to mention that his
-blog is really worth reading and I snitched some good ideas from him.
+This is a sudoku solving engine written in python depending on an SMT solver (Z3) rather than the approach of Peter Norvig. I would like to mention that his blog is really worth reading and I snitched some good ideas from him.
 
-Therefore take a look at [his blog post of solving sudoku puzzles](https://norvig.com/sudoku.html).
+Therefore take a look at [his blog post about solving sudoku puzzles](https://norvig.com/sudoku.html).
 
 ## Example
 
