@@ -60,21 +60,19 @@ class Sudoku:
     def __str__(self):
         lines, elements = [], cross("ABCDEFGHI", "123456789")
 
-        for index_row, row in enumerate("ABCDEFGHI", 1):
+        print("[+] Puzzle:", ''.join(self.values[e] for e in elements))
+
+        for index_row, row in enumerate("ABCDEFGHI"):
+            if index_row % 3 == 0:
+                lines.append("+–––––––––+–––––––––+–––––––––+")
+
             line = ''
+            for index_col, col in enumerate("123456789"):
+                line += "{1} {0} ".format(self.values[row + col], '|' if index_col % 3 == 0 else '')
+            lines.append(line + '|')
 
-            for index_col, col in enumerate("123456789", 1):
-                line += ' ' + self.values[row + col]
-
-                if index_col == 3 or index_col == 6:
-                    line += ' |'
-
-            lines.append(line)
-
-            if index_row == 3 or index_row == 6:
-                lines.append('–––––––+–––––––+–––––––')
-
-        return '\n'.join(lines + [''])
+        lines.append("+–––––––––+–––––––––+–––––––––+")
+        return '\n'.join(lines) + '\n'
 
 def Z3Solving(sudoku):
     from z3 import Solver, Int, Or, Distinct, sat
@@ -118,8 +116,6 @@ def main(puzzle):
     print("[+] processing puzzle:", puzzle)
 
     s = Sudoku.parse_grid(puzzle)
-
-    print("[+] pretty print of given puzzle")
     print(s)
 
     print("[+] trying to solve it with z3")
@@ -132,8 +128,7 @@ if __name__ == "__main__":
 
     if len(argv) != 2:
         print("[!] we are using some test puzzle due to missing argument")
-        puzzle = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
-        main(puzzle)
+        main("4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
     else:
         main(argv[1])
 

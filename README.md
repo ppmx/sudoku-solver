@@ -1,11 +1,12 @@
 # Solving Sudoku Puzzles By Algorithms
 
-## Description
-This is a sudoku solving engine written in python depending on an SMT solver (Z3) rather than the approach of Peter Norvig. I would like to mention that his blog is really worth reading and I snitched some good ideas from him.
+## using a native SMT solver
+This is a sudoku solving engine written in python depending on an SMT solver (Z3) rather than the approach of Peter Norvig.
+I would like to mention that his blog is really worth reading and I snitched some good ideas from him.
 
 Therefore take a look at [his blog post about solving sudoku puzzles](https://norvig.com/sudoku.html).
 
-## Example
+### Example
 
 ```
 $ time ./sudoku.py 
@@ -40,3 +41,8 @@ $ time ./sudoku.py
 
 ./sudoku.py  0.56s user 0.01s system 99% cpu 0.577 total
 ```
+
+## using a symbolic execution engine
+
+It is also possible to solve a sudoku puzzle by finding the execution path of a program that identifies a solved puzzle.
+This example depends on a symbolic execution engine (especially KLEE) to reach exactly that "congratulations"-path.
