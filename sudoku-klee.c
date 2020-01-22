@@ -20,13 +20,15 @@
 
 #define UNASSIGNED 0
 
-void sudoku_pretty_print(int f[9][9])
+void sudoku_pretty_print(int grid[9][9])
 {
 	// print field as one-liner:
-	printf("[+] Puzzle: ");
+	printf("[+] Sudoku grid: ");
+
 	for (size_t i = 0; i < 9; i++)
 		for (size_t j = 0; j < 9; j++)
-			f[i][j] == UNASSIGNED ? printf(".") : printf("%d", f[i][j]);
+			grid[i][j] == UNASSIGNED ? printf(".") : printf("%d", grid[i][j]);
+
 	printf("\n");
 
 	// this is the "pretty" printing part:
@@ -37,18 +39,21 @@ void sudoku_pretty_print(int f[9][9])
 		for (size_t col = 0; col < 9; col++) {
 			if (col % 3 == 0)
 				printf("|");
-			f[row][col] == UNASSIGNED ? printf(" . ") : printf(" %d ", f[row][col]);
+			grid[row][col] == UNASSIGNED ? printf(" . ") : printf(" %d ", grid[row][col]);
 		}
 
 		printf("|\n");
 	}
+
 	printf("+–––––––––+–––––––––+–––––––––+\n");
 }
 
-/* This function checks if a given field fulfills all constraints of a solved
- * sudoku puzzle. It returns 1 if so and 0 otherwise.
+/* This function checks if the given sudoku grid fulfills all constraints
+ * of a solved sudoku puzzle.
+ *
+ * Returns 1 i the grid is solved and 0 otherwise.
  */
-int sudoku_is_solved(int f[9][9])
+int sudoku_is_solved(int grid[9][9])
 {
 	/*
 	 * A sudoku puzzle is solved if and only if the following conditions are
@@ -67,14 +72,14 @@ int sudoku_is_solved(int f[9][9])
 
 		for (size_t col = 0; col < 9; col++) {
 			// If there is no valid number in the field:
-			if (!(f[row][col] >= 1 && f[row][col] <= 9))
+			if (!(grid[row][col] >= 1 && grid[row][col] <= 9))
 				return 0;
 
 			// If we still counted some value:
-			if (numbers[f[row][col] - 1] != 0)
+			if (numbers[grid[row][col] - 1] != 0)
 				return 0;
 
-			numbers[f[row][col] - 1] += 1;
+			numbers[grid[row][col] - 1] += 1;
 		}
 	}
 
@@ -84,14 +89,14 @@ int sudoku_is_solved(int f[9][9])
 
 		for (size_t row = 0; row < 9; row++) {
 			// If there is no valid number in the field:
-			if (!(f[row][col] >= 1 && f[row][col] <= 9))
+			if (!(grid[row][col] >= 1 && grid[row][col] <= 9))
 				return 0;
 
 			// If we still counted some value:
-			if (numbers[f[row][col] - 1] != 0)
+			if (numbers[grid[row][col] - 1] != 0)
 				return 0;
 
-			numbers[f[row][col] - 1] += 1;
+			numbers[grid[row][col] - 1] += 1;
 		}
 	}
 
@@ -106,14 +111,14 @@ int sudoku_is_solved(int f[9][9])
 					size_t c = block_col * 3 + col;
 
 					// If there is no valid number in the field:
-					if (!(f[r][c] >= 1 && f[r][c] <= 9))
+					if (!(grid[r][c] >= 1 && grid[r][c] <= 9))
 						return 0;
 
 					// If we still counted some value:
-					if (numbers[f[r][c] - 1] != 0)
+					if (numbers[grid[r][c] - 1] != 0)
 						return 0;
 
-					numbers[f[r][c] - 1] += 1;	
+					numbers[grid[r][c] - 1] += 1;	
 				}
 			}
 		}
@@ -122,10 +127,12 @@ int sudoku_is_solved(int f[9][9])
 	return 1;
 }
 
-/* This function parses a given field and writes it to the field
- * 'structure'.
+/* This function receives a grid representation stored in buffer, where
+ * each element is a number for one position in the grid.
+ *
+ * Returns 0 if the grid representation was valid and -1 otherwise.
  */
-int parse_field(int f[9][9], char buffer[81])
+int parse_field(int grid[9][9], char buffer[81])
 {
 	if (strlen(buffer) != 81)
 		return -1;
@@ -142,62 +149,62 @@ int parse_field(int f[9][9], char buffer[81])
 			// The current value of the submission is not okay if the proper
 			// position in the field is not empty and the submitted value
 			// differs from the given value
-			if (f[row][col] != UNASSIGNED && f[row][col] != s)
+			if (grid[row][col] != UNASSIGNED && grid[row][col] != s)
 				return -1;
 
-			f[row][col] = s;
+			grid[row][col] = s;
 		}
 	}
 
 	return 0;
 }
 
-/* This function reads a field from stdin by reading 81 characters and
- * interprets every character as number.
+/* This function receives the representation of a sudoku grid
+ * from STDIN (81 characters for all positions in the grid, and
+ * one newline character).
  *
- * returns -1 on error and 0 on success.
+ * Returns 0 if the grid representation was valid and -1 otherwise.
  */
-int read_solution(int f[9][9])
+int read_solution(int grid[9][9])
 {
 	char buffer[82];
 
 	printf("Please submit your solution: ");
 	fgets(buffer, 82, stdin);
-	return parse_field(f, buffer);
+	return parse_field(grid, buffer);
 }
 
 int main(int argc, char **argv)
 {
-	int field[9][9];
+	int grid[9][9];
 
 	// empty the field:
 	for (size_t i = 0; i < 9; i++)
 		for (size_t j = 0; j < 9; j++)
-			field[i][j] = 0;
+			grid[i][j] = 0;
 
-	// char puzzle[] = "004083700085702090700000108050804003000395000600107080406000007090208360007430500";
-	char puzzle[] = "100060050003000100060300800000057960070000080039610000001004020002000600080090004";
+	// char game[] = "004083700085702090700000108050804003000395000600107080406000007090208360007430500";
+	char game[] = "100060050003000100060300800000057960070000080039610000001004020002000600080090004";
 
-	if (parse_field(field, puzzle) != 0) {
-		fprintf(stderr, "[!] error reading puzzle\n");
+	if (parse_field(grid, game) != 0) {
+		fprintf(stderr, "[!] error reading game\n");
 		return -1;
 	}
 
-	sudoku_pretty_print(field);
+	sudoku_pretty_print(grid);
 
 	// note: here could be your autosolver code instead of reading from stdin... :-)
-	if (read_solution(field) != 0) {
-		fprintf(stderr, "[!] error reading your solution\n");
+	if (read_solution(grid) != 0) {
+		fprintf(stderr, "[!] error reading solution\n");
 		return -1;
 	}
 
-	sudoku_pretty_print(field);
+	sudoku_pretty_print(grid);
 
-	if (sudoku_is_solved(field))
-		printf("[+] it's solved. congratulations.\n");
+	if (sudoku_is_solved(grid))
+		printf("[+] solved: congratulations\n");
 	else
-		printf("[!] no, it's not solved.\n");
+		printf("[!] not solved\n");
 
 	return 0;
 }
-
