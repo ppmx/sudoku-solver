@@ -73,3 +73,32 @@ $ echo "teststring" > fuzzing/input/random_grid.txt
 $ afl-gcc -o fuzzing/target sudoku-afl.c
 $ cd fuzzing; afl-fuzz -i input -o output target
 ```
+
+After 36 minutes i stopped the execution:
+
+```
+                       american fuzzy lop 2.56b (target)
+
+┌─ process timing ─────────────────────────────────────┬─ overall results ─────┐
+│        run time : 0 days, 0 hrs, 36 min, 32 sec      │  cycles done : 147    │
+│   last new path : 0 days, 0 hrs, 27 min, 32 sec      │  total paths : 102    │
+│ last uniq crash : none seen yet                      │ uniq crashes : 0      │
+│  last uniq hang : none seen yet                      │   uniq hangs : 0      │
+├─ cycle progress ────────────────────┬─ map coverage ─┴───────────────────────┤
+│  now processing : 86 (84.31%)       │    map density : 0.23% / 0.29%         │
+│ paths timed out : 0 (0.00%)         │ count coverage : 2.15 bits/tuple       │
+├─ stage progress ────────────────────┼─ findings in depth ────────────────────┤
+│  now trying : splice 2              │ favored paths : 36 (35.29%)            │
+│ stage execs : 78/96 (81.25%)        │  new edges on : 37 (36.27%)            │
+│ total execs : 8.06M                 │ total crashes : 0 (0 unique)           │
+│  exec speed : 3902/sec              │  total tmouts : 0 (0 unique)           │
+├─ fuzzing strategy yields ───────────┴───────────────┬─ path geometry ────────┤
+│   bit flips : 85/66.3k, 9/66.2k, 2/66.0k            │    levels : 18         │
+│  byte flips : 0/8286, 0/8184, 0/7980                │   pending : 0          │
+│ arithmetics : 5/464k, 0/2575, 0/0                   │  pend fav : 0          │
+│  known ints : 0/53.7k, 0/229k, 0/351k               │ own finds : 101        │
+│  dictionary : 0/0, 0/0, 0/0                         │  imported : n/a        │
+│       havoc : 0/2.60M, 0/4.14M                      │ stability : 100.00%    │
+│        trim : 0.93%/3041, 0.00%                     ├────────────────────────┘
+└─────────────────────────────────────────────────────┘          [cpu000: 71%]
+```
