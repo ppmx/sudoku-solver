@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 #define UNASSIGNED 0
 
@@ -111,6 +112,9 @@ int sudoku_is_solved(int grid[9][9])
 			}
 		}
 	}
+
+	// For AFL!
+	raise(SIGSEGV);
 
 	return 1;
 }

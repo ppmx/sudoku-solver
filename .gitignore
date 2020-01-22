@@ -1,1 +1,4 @@
 a.out
+fuzzing/*
+symex/*
+__pycache__
