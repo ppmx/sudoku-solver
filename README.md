@@ -102,3 +102,5 @@ After 36 minutes i stopped the execution:
 │        trim : 0.93%/3041, 0.00%                     ├────────────────────────┘
 └─────────────────────────────────────────────────────┘          [cpu000: 71%]
 ```
+
+Statistics can be found in `fuzzing/output/fuzzer_stats`.
