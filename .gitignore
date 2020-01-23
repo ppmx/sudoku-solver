@@ -1,4 +1,4 @@
 a.out
 fuzzing/*
-symex/*
+symex/klee-out-*
 __pycache__

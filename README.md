@@ -38,18 +38,6 @@ python3 sudoku-z3.py  0.59s user 0.02s system 99% cpu 0.612 total
 ```
 
 
-## Symbolic Execution
-
-A symbolic execution engine evaluates a program in order to find every possible execution path including the condition to reach that path.
-
-Let's solve it using [KLEE](http://klee.github.io):
-
-```
-$ clang -I ~/klee/include -c -emit-llvm -g sudoku-klee.c
-$ klee --libc=uclibc -posix-runtime sudoku-klee.bc -sym-stdin 82
-```
-
-
 ## Fuzzing
 
 Today, everything gets fuzzed. Everything!
@@ -104,3 +92,10 @@ After 36 minutes i stopped the execution:
 ```
 
 Statistics can be found in `fuzzing/output/fuzzer_stats`.
+
+
+## Symbolic Execution
+
+A symbolic execution engine evaluates a program in order to find every possible execution path including the condition to reach that path.
+
+Let's solve it using [KLEE](http://klee.github.io).

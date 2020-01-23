@@ -33,18 +33,22 @@ class Sudoku:
         if any(c not in "123456789." for c in grid) or len(grid) != 81:
             raise Exception("invalid grid")
 
-        elements = cross("ABCDEFGHI", "123456789")
-        mapping = dict(zip(elements, grid))
+        positions = cross("ABCDEFGHI", "123456789")
+        mapping = dict(zip(positions, grid))
         return Sudoku(mapping)
 
     def __init__(self, mapping=None):
         rows, cols = "ABCDEFGHI", "123456789"
 
-        self.elements = cross(rows, cols)
+        self.positions = cross(rows, cols)
 
         # self.grid maps a cell (e.g. 'A1') to its value (e.g. int('9')).
         # A dot ('.') represents a cell that is not yet filled.
-        self.grid = mapping if mapping else {elem: '.' for elem in self.elements}
+        self.grid = {pos: '.' for pos in self.positions}
+
+        if mapping:
+            print(mapping)
+            self.grid.update(mapping)
 
         # self.units stores a list of lists with cells belonging together:
         self.units = []
@@ -52,12 +56,27 @@ class Sudoku:
         self.units += [cross(row, cols) for row in rows]
         self.units += [cross(r, c) for r in ["ABC", "DEF", "GHI"] for c in ["123", "456", "789"]]
 
+    def position_occupied(self, position):
+        """ Returns True if and only if the cell is filled. """
+
+        return self.grid[position] != '.'
+
+    def get_value(self, position):
+        """ Returns the value in a position. Returns '.' if unfilled. """
+
+        return self.grid[position]
+
+    def set_value(self, position, value):
+        """ Sets a value in the grid to a specific position """
+
+        self.grid[position] = value
+
     def __str__(self):
         """ Returns simple string representation of the current grid. Can be used
         as input for parse().
         """
 
-        return ''.join([self.grid[elem] for elem in self.elements])
+        return ''.join([self.grid[pos] for pos in self.positions])
 
     def pretty_print(self):
         """ Returns a pretty representation of the grid as string. """
@@ -86,7 +105,7 @@ class Sudoku:
             return False
 
         # assert that each unit is solved:
-        check_unit = lambda unit: set([self.grid[cell] for cell in unit]) == set("123456789")
+        check_unit = lambda unit: set(self.grid[cell] for cell in unit) == set("123456789")
         return all(check_unit(unit) for unit in self.units)
 
 def main():

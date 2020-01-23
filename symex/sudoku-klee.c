@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <assert.h>
+#include "klee/klee.h"
+
 #define UNASSIGNED 0
 
 void sudoku_pretty_print(int grid[9][9])
@@ -147,19 +150,34 @@ int parse_field(int grid[9][9], char buffer[81])
 	return 0;
 }
 
-/* This function receives the representation of a sudoku grid
- * from STDIN (81 characters for all positions in the grid, and
- * one newline character).
+/* This function prepares symbolic space for a representation
+ * of a sudoku grid.
  *
- * Returns 0 if the grid representation was valid and -1 otherwise.
+ * Returns 0.
  */
 int read_solution(int grid[9][9])
 {
-	char buffer[82];
+	int buffer[81];
+	int pos = 0;
 
-	printf("Please submit your solution: ");
-	fgets(buffer, 82, stdin);
-	return parse_field(grid, buffer);
+	klee_make_symbolic(buffer, sizeof(buffer), "buffer");
+
+	for (size_t row = 0; row < 9; row++) {
+		for (size_t col = 0; col < 9; col++) {
+			pos = row * 9 + col;
+
+			if (grid[row][col] == UNASSIGNED) {
+				klee_assume(buffer[pos] >= 1);
+				klee_assume(buffer[pos] <= 9);
+			} else {
+				buffer[pos] = grid[row][col];
+			}
+
+			grid[row][col] = buffer[pos];
+		}
+	}
+
+	return 0;
 }
 
 int main(int argc, char **argv)
@@ -174,25 +192,20 @@ int main(int argc, char **argv)
 	// char game[] = "004083700085702090700000108050804003000395000600107080406000007090208360007430500";
 	char game[] = "100060050003000100060300800000057960070000080039610000001004020002000600080090004";
 
+	// Read initial game with unfilled cells:
 	if (parse_field(grid, game) != 0) {
-		fprintf(stderr, "[!] error reading game\n");
+		printf("[!] error reading game\n");
 		return -1;
 	}
 
-	sudoku_pretty_print(grid);
-
-	// note: here could be your autosolver code instead of reading from stdin... :-)
+	// Read symbolic input:
 	if (read_solution(grid) != 0) {
-		fprintf(stderr, "[!] error reading solution\n");
+		printf("[!] error reading solution\n");
 		return -1;
 	}
-
-	sudoku_pretty_print(grid);
 
 	if (sudoku_is_solved(grid))
-		printf("[+] solved: congratulations\n");
-	else
-		printf("[!] not solved\n");
+		klee_assert(0);
 
 	return 0;
 }

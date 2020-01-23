@@ -2,11 +2,13 @@
 
 from sudoku import Sudoku
 
-def Z3Solving(sudoku):
+def z3_solving(sudoku):
+    """ Function solving the given sudoku puzzle using Z3 """
+
     from z3 import Solver, Int, Or, Distinct, sat
 
-    #elements = cross("ABCDEFGHI", "123456789")
-    symbols = {e: Int(e) for e in sudoku.elements}
+    #positions = cross("ABCDEFGHI", "123456789")
+    symbols = {pos: Int(pos) for pos in sudoku.positions}
 
     # first we build a solver with the general constraints for sudoku puzzles:
     s = Solver()
@@ -29,15 +31,15 @@ def Z3Solving(sudoku):
             s.add(Distinct([symbols["ABCDEFGHI"[m + i * 3] + "123456789"[n + j * 3]] for m in range(3) for n in range(3)]))
 
     # now we put the assumptions of the given puzzle into the solver:
-    for elem, value in sudoku.grid.items():
+    for pos, value in sudoku.grid.items():
         if value in "123456789":
-            s.add(symbols[elem] == value)
+            s.add(symbols[pos] == value)
 
     if s.check() != sat:
         raise Exception("unsolvable")
 
     model = s.model()
-    values = {e: model.evaluate(s).as_string() for e, s in symbols.items()}
+    values = {pos: model.evaluate(s).as_string() for pos, s in symbols.items()}
     return Sudoku(values)
 
 def main(puzzle):
@@ -47,7 +49,7 @@ def main(puzzle):
 
     print("[+] start solving using Z3")
 
-    s_solved = Z3Solving(s)
+    s_solved = z3_solving(s)
 
     print("[+] solved:", s_solved.is_solved())
     print(s_solved)
